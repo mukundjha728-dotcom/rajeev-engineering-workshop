@@ -6,11 +6,11 @@ const SEO = ({
   description, 
   keywords, 
   canonical, 
-  image = 'https://rajeev-engineering-workshop.vercel.app/assets/images/hero-welding.jpg',
+  image = 'https://rajeev-engineering-workshop-six.vercel.app/assets/images/hero-welding.jpg',
   type = 'website',
   schemaList = []
 }) => {
-  const siteUrl = 'https://rajeev-engineering-workshop.vercel.app';
+  const siteUrl = 'https://rajeev-engineering-workshop-six.vercel.app';
   const fullCanonical = canonical ? `${siteUrl}${canonical}` : siteUrl;
 
   return (

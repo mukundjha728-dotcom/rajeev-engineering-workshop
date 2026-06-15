@@ -46,7 +46,7 @@ const BlogPost = () => {
       "name": "Rajeev Engineering Workshop",
       "logo": {
         "@type": "ImageObject",
-        "url": "https://rajeev-engineering-workshop.vercel.app/logo.png"
+        "url": "https://rajeev-engineering-workshop-six.vercel.app/logo.png"
       }
     }
   };
@@ -72,19 +72,19 @@ const BlogPost = () => {
         "@type": "ListItem",
         "position": 1,
         "name": "Home",
-        "item": "https://rajeev-engineering-workshop.vercel.app/"
+        "item": "https://rajeev-engineering-workshop-six.vercel.app/"
       },
       {
         "@type": "ListItem",
         "position": 2,
         "name": "Blog",
-        "item": "https://rajeev-engineering-workshop.vercel.app/blog"
+        "item": "https://rajeev-engineering-workshop-six.vercel.app/blog"
       },
       {
         "@type": "ListItem",
         "position": 3,
         "name": blog.title,
-        "item": `https://rajeev-engineering-workshop.vercel.app/blog/${blog.slug}`
+        "item": `https://rajeev-engineering-workshop-six.vercel.app/blog/${blog.slug}`
       }
     ]
   };
