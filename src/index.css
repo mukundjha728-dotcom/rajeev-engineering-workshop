@@ -1,0 +1,15 @@
+@import "tailwindcss";
+
+@theme {
+  --color-brand-navy: #081225;
+  --color-brand-gunmetal: #1C2431;
+  --color-brand-gold: #D4AF37;
+  --color-brand-green: #25D366;
+  --color-brand-gray: #A3AAB8;
+}
+
+@layer base {
+  body {
+    @apply bg-brand-navy text-white antialiased selection:bg-brand-gold selection:text-brand-navy scroll-smooth overflow-x-hidden;
+  }
+}
