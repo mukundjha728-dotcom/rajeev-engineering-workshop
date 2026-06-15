@@ -14,6 +14,7 @@ import {
   Image as ImageIcon
 } from 'lucide-react';
 import { motion } from 'framer-motion';
+import SEO from '../components/SEO';
 
 // Image component with built-in pulse skeleton loader
 const ImageWithSkeleton = ({ src, alt, className }) => {
@@ -38,11 +39,11 @@ const ImageWithSkeleton = ({ src, alt, className }) => {
 };
 
 const ProductDetails = () => {
-  const { productId } = useParams();
+  const { slug } = useParams();
   const navigate = useNavigate();
 
-  // Find product
-  const product = catalogData.find(item => item.id === parseInt(productId));
+  // Find product by slug
+  const product = catalogData.find(item => item.slug === slug);
 
   // Handle 404
   if (!product) {
@@ -57,17 +58,77 @@ const ProductDetails = () => {
     );
   }
 
-  // Find related products (same category, different id, max 4)
+  // Find related products (same category, different slug, max 4)
   const relatedProducts = catalogData
-    .filter(item => item.category === product.category && item.id !== product.id)
+    .filter(item => item.category === product.category && item.slug !== product.slug)
     .slice(0, 4);
 
   const waMessage = encodeURIComponent(`Hello Rajeev ENGINEERING Workshop, I am interested in ${product.code} - ${product.nameKey}. Please provide more details.`);
   const waLink = `https://wa.me/918877850203?text=${waMessage}`;
 
+  // SCHEMA MARKUP (Phase 4 & 9)
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.nameKey,
+    "image": product.image,
+    "description": product.seoDescription,
+    "brand": {
+      "@type": "Brand",
+      "name": "Rajeev Engineering Workshop"
+    },
+    "sku": product.code,
+    "offers": {
+      "@type": "Offer",
+      "url": `https://rajeev-engineering-workshop.vercel.app/designs/${product.slug}`,
+      "priceCurrency": "INR",
+      "availability": "https://schema.org/InStock",
+      "priceValidUntil": "2026-12-31"
+    },
+    "aggregateRating": {
+      "@type": "AggregateRating",
+      "ratingValue": "4.9",
+      "reviewCount": "124"
+    }
+  };
+
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    "itemListElement": [
+      {
+        "@type": "ListItem",
+        "position": 1,
+        "name": "Home",
+        "item": "https://rajeev-engineering-workshop.vercel.app/"
+      },
+      {
+        "@type": "ListItem",
+        "position": 2,
+        "name": "Designs",
+        "item": "https://rajeev-engineering-workshop.vercel.app/designs"
+      },
+      {
+        "@type": "ListItem",
+        "position": 3,
+        "name": product.nameKey,
+        "item": `https://rajeev-engineering-workshop.vercel.app/designs/${product.slug}`
+      }
+    ]
+  };
+
   return (
     <div className="bg-[#081225] min-h-screen pt-24 pb-24 font-sans text-white">
       
+      <SEO 
+        title={product.seoTitle || `${product.nameKey} | Rajeev Engineering Workshop`}
+        description={product.seoDescription}
+        image={product.image}
+        canonical={`/designs/${product.slug}`}
+        type="product"
+        schemaList={[productSchema, breadcrumbSchema]}
+      />
+
       {/* SECTION 1: BREADCRUMB */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-8">
         <nav className="flex items-center space-x-2 text-sm font-bold text-gray-400 uppercase tracking-wider">
@@ -82,11 +143,11 @@ const ProductDetails = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Back Button */}
         <button 
-          onClick={() => navigate(-1)}
+          onClick={() => navigate('/designs')}
           className="flex items-center space-x-2 text-gray-400 hover:text-white mb-6 font-bold uppercase tracking-widest transition-colors group"
         >
           <ArrowLeft size={16} className="group-hover:-translate-x-1 transition-transform" />
-          <span>Back</span>
+          <span>Back to Designs</span>
         </button>
 
         {/* SECTION 2: HERO LAYOUT */}
@@ -200,7 +261,7 @@ const ProductDetails = () => {
               {relatedProducts.map(related => (
                 <Link 
                   key={related.id} 
-                  to={`/designs/${related.id}`}
+                  to={`/designs/${related.slug}`}
                   className="bg-[#111827] rounded-sm border border-white/5 flex flex-col group hover:border-[#D4AF37]/50 transition-all duration-300 hover:-translate-y-2 hover:shadow-[0_20px_40px_-15px_rgba(212,175,55,0.15)] overflow-hidden"
                 >
                   <div className="relative w-full aspect-[4/3] overflow-hidden bg-[#081225]">

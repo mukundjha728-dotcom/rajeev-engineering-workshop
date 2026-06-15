@@ -4,6 +4,7 @@ import { Phone, MapPin, Clock, MessageCircle, Send } from 'lucide-react';
 import mapImage from '../assets/images/darbhanga-map.jpg';
 import heroBg from '../assets/images/hero-welding.jpg';
 import { useTranslation } from 'react-i18next';
+import SEO from '../components/SEO';
 
 const Contact = () => {
   const { t } = useTranslation();
@@ -32,8 +33,32 @@ const Contact = () => {
     { icon: Clock, title: t('contact.card_hours'), desc: t('contact.hours_desc'), link: null }
   ];
 
+  const localBusinessSchema = {
+    "@context": "https://schema.org",
+    "@type": "LocalBusiness",
+    "name": "Rajeev Engineering Workshop",
+    "image": "https://rajeev-engineering-workshop.vercel.app/assets/images/hero-welding.jpg",
+    "url": "https://rajeev-engineering-workshop.vercel.app/contact",
+    "telephone": "+918877850203",
+    "address": {
+      "@type": "PostalAddress",
+      "streetAddress": "Ghanshyam Pur",
+      "addressLocality": "Darbhanga",
+      "addressRegion": "Bihar",
+      "postalCode": "847427",
+      "addressCountry": "IN"
+    }
+  };
+
   return (
     <div className="pt-20 bg-brand-navy min-h-screen">
+      <SEO 
+        title="Contact Rajeev Engineering Workshop | Get a Free Quote"
+        description="Contact Rajeev Engineering Workshop in Darbhanga for custom iron gates, rolling shutters, and industrial sheds. Call +91 8877850203."
+        keywords="contact iron fabricator, welding shop near me, rajeev engineering phone number, darbhanga fabricator"
+        canonical="/contact"
+        schemaList={[localBusinessSchema]}
+      />
       {/* Hero Section */}
       <section className="relative py-24 border-b border-brand-gold/20 overflow-hidden text-center min-h-[400px] flex flex-col justify-center">
         <img src={heroBg} alt="Welding Background" className="absolute inset-0 w-full h-full object-cover grayscale opacity-30" />

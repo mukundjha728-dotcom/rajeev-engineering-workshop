@@ -24,8 +24,6 @@ const Navbar = () => {
     { name: t('nav.designs'), href: '/designs' },
     { name: t('nav.about'), href: '/about' },
     { name: t('nav.contact'), href: '/contact' },
-    { name: t('nav.gallery'), href: '/#gallery' },
-    { name: t('nav.reviews'), href: '/#reviews' },
   ];
 
   return (

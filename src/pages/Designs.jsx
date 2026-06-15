@@ -359,7 +359,7 @@ const Designs = () => {
                   exit={{ opacity: 0, scale: 0.95 }}
                   transition={{ duration: 0.4 }}
                   key={design.id}
-                  onClick={() => navigate(`/designs/${design.id}`)}
+                  onClick={() => navigate(`/designs/${design.slug}`)}
                   className="bg-[#111827] rounded-sm border border-white/5 flex flex-col group hover:border-[#D4AF37]/50 transition-all duration-500 hover:-translate-y-3 hover:shadow-[0_30px_60px_-15px_rgba(212,175,55,0.15)] overflow-hidden shadow-2xl cursor-pointer"
                 >
                   {/* Fixed Ratio Image Container - 260px strictly */}

@@ -1,161 +1,138 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Shield, Clock, Users, Award, Hammer, Wrench, Settings, Warehouse, DoorOpen, Maximize } from 'lucide-react';
+import { Shield, Clock, Users, Award, Hammer, Wrench, Settings, Warehouse, DoorOpen, Maximize, CheckCircle2 } from 'lucide-react';
 import heroImage from '../assets/images/workshop-team.jpg'; 
-import mapImage from '../assets/images/darbhanga-map.jpg';
+import SEO from '../components/SEO';
 import Counter from '../components/Counter';
-import { useTranslation } from 'react-i18next';
 
 const About = () => {
-  const { t } = useTranslation();
-
   const achievements = [
-    { value: <Counter to={10} suffix="+" />, label: t('about.ach_yexp') },
-    { value: <Counter to={5000} suffix="+" />, label: t('about.ach_customers') },
-    { value: <Counter to={1000} suffix="+" />, label: t('about.ach_designs') },
-    { value: <Counter to={7} suffix={` ${t('about.ach_open').split(' ')[0]}`} />, label: t('about.ach_open').split(' ')[1] || t('about.ach_open') }
+    { value: <Counter to={12} suffix="+" />, label: "Years Experience" },
+    { value: <Counter to={5200} suffix="+" />, label: "Projects Completed" },
+    { value: <Counter to={150} suffix="+" />, label: "B2B Clients" },
+    { value: <Counter to={7} suffix=" Days" />, label: "Open Every Week" }
   ];
 
-  const services = [
-    { title: t('about.srv_1'), icon: DoorOpen },
-    { title: t('about.srv_2'), icon: Maximize },
-    { title: t('about.srv_3'), icon: Settings },
-    { title: t('about.srv_4'), icon: Shield },
-    { title: t('about.srv_5'), icon: Hammer },
-    { title: t('about.srv_6'), icon: Warehouse }
+  const trustFactors = [
+    { title: "Uncompromising Quality", desc: "We use only premium Tata and Apollo steel pipes. No light-gauge shortcuts.", icon: Shield },
+    { title: "Expert Welds", desc: "Our ironsmiths have decades of combined experience in deep penetration arc welding.", icon: Award },
+    { title: "Timely Delivery", desc: "We understand construction timelines. When we commit to a date, we deliver.", icon: Clock },
+    { title: "Custom Engineering", desc: "From simple grills to massive factory sheds, we engineer solutions that last.", icon: Wrench }
   ];
 
-  const trustBlocks = [
-    { title: t('about.trust_1_t'), desc: t('about.trust_1_d'), icon: Shield },
-    { title: t('about.trust_2_t'), desc: t('about.trust_2_d'), icon: Users },
-    { title: t('about.trust_3_t'), desc: t('about.trust_3_d'), icon: Clock },
-    { title: t('about.trust_4_t'), desc: t('about.trust_4_d'), icon: Wrench }
-  ];
-
-  const areas = ["Darbhanga", "Ghanshyam Pur", "Benipur", "Biraul", "Madhubani", "Samastipur"];
+  const areas = ["Darbhanga", "Ghanshyam Pur", "Benipur", "Biraul", "Madhubani", "Samastipur", "Laheriasarai"];
 
   return (
-    <div className="pt-20">
+    <div className="bg-[#081225] min-h-screen pt-20 font-sans text-white">
+      <SEO 
+        title="About Rajeev Engineering Workshop | 10+ Years of Trust in Bihar"
+        description="Learn about Rajeev Kumar's journey in building the most trusted iron fabrication workshop in Darbhanga. Over 5000+ custom iron gates and structures delivered."
+        keywords="about rajeev engineering, rajeev kumar darbhanga, iron workshop history, best fabricator bihar"
+        canonical="/about"
+      />
+
       {/* Hero Section */}
-      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden">
-        <img src={heroImage} alt="Workshop" className="absolute inset-0 w-full h-full object-cover grayscale opacity-30" />
-        <div className="absolute inset-0 bg-brand-navy/80 mix-blend-multiply"></div>
+      <section className="relative h-[60vh] min-h-[500px] flex items-center justify-center overflow-hidden border-b border-white/5">
+        <img src={heroImage} alt="Rajeev Engineering Workshop Facility" className="absolute inset-0 w-full h-full object-cover grayscale opacity-20" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#081225] via-transparent to-transparent"></div>
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.8 }}>
-            <div className="inline-block bg-brand-gunmetal border border-brand-gold/30 px-4 py-2 rounded-full mb-6">
-              <span className="text-brand-gold font-bold uppercase tracking-widest text-sm"><Counter to={10} suffix="+" /> {t('about.badge')}</span>
+            <div className="inline-block bg-[#111827] border border-[#D4AF37]/30 px-4 py-2 rounded-sm mb-6 shadow-2xl">
+              <span className="text-[#D4AF37] font-black uppercase tracking-widest text-xs">A Decade of Iron Craftsmanship</span>
             </div>
             <h1 className="text-4xl md:text-6xl font-black text-white uppercase tracking-tight mb-6">
-              {t('about.title1')} <span className="text-brand-gold">{t('about.title2')}</span> {t('about.title3').replace('{{count}}', '10')}
+              Forging Strength, <span className="text-[#D4AF37]">Building Trust</span>
             </h1>
-            <p className="text-brand-gray text-lg md:text-xl font-medium">
-              {t('about.desc').replace('{{count}}', '10')}
+            <p className="text-gray-400 text-lg md:text-xl font-medium max-w-2xl mx-auto">
+              Rajeev Engineering Workshop is Darbhanga's premier iron fabrication facility, specializing in heavy-duty residential and commercial steel structures.
             </p>
           </motion.div>
         </div>
       </section>
 
-      {/* Who We Are */}
-      <section className="py-24 bg-brand-navy border-t border-brand-gunmetal">
-        <div className="max-w-4xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-8">{t('about.who_title1')} <span className="text-brand-gold">{t('about.who_title2')}</span></h2>
-          <div className="space-y-6 text-brand-gray text-lg leading-relaxed font-medium">
-            <p>{t('about.who_p1')}</p>
-            <p>{t('about.who_p2').replace('{{count}}', '10')}</p>
-            <p>{t('about.who_p3')}</p>
-            <p className="text-brand-gold font-bold text-xl mt-8">{t('about.who_p4')}</p>
+      {/* Owner Story (E-E-A-T Focus) */}
+      <section className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+          <div>
+            <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-8 border-l-4 border-[#D4AF37] pl-4">
+              Our Journey
+            </h2>
+            <div className="space-y-6 text-gray-300 text-lg leading-relaxed">
+              <p>
+                Founded over 12 years ago by <strong className="text-white">Rajeev Kumar</strong> in Ghanshyam Pur, Darbhanga, the workshop began with a simple mission: to provide the local community with iron gates and grills that actually last. 
+              </p>
+              <p>
+                In a market flooded with lightweight, rust-prone ironworks, Rajeev Engineering Workshop took a different path. By refusing to compromise on material gauge and investing in heavy-duty arc welding machinery, the workshop quickly built a reputation for unbreakable quality.
+              </p>
+              <p>
+                Today, what started as a small local setup has grown into a massive fabrication hub capable of delivering multi-ton industrial sheds, fully automated motorized rolling shutters, and intricate CNC laser-cut gates to homes and businesses across Bihar.
+              </p>
+            </div>
+            
+            <div className="mt-10 bg-[#111827] p-6 border border-white/5 rounded-sm">
+              <h3 className="text-xl font-black text-white uppercase tracking-widest mb-4 text-[#D4AF37]">The Founder's Guarantee</h3>
+              <p className="text-gray-400 italic">"We don't just weld iron; we secure your family and your business. Every single piece that leaves our workshop carries my personal guarantee of structural integrity."</p>
+              <p className="mt-4 font-black uppercase tracking-widest text-sm text-white">— Rajeev Kumar, Founder</p>
+            </div>
+          </div>
+          <div className="relative">
+            <div className="absolute inset-0 border-2 border-[#D4AF37]/20 translate-x-4 translate-y-4 rounded-sm"></div>
+            <img src={heroImage} alt="Rajeev Kumar and Team" className="relative z-10 w-full aspect-[4/3] object-cover rounded-sm border border-white/10 shadow-2xl" />
           </div>
         </div>
       </section>
 
-      {/* Our Achievements */}
-      <section className="py-20 bg-brand-gunmetal">
+      {/* Stats */}
+      <section className="py-20 bg-[#111827] border-y border-white/5">
         <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-black text-white text-center uppercase tracking-tight mb-16">{t('about.ach_title1')} <span className="text-brand-gold">{t('about.ach_title2')}</span></h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
             {achievements.map((stat, idx) => (
-              <div key={idx} className="bg-brand-navy p-8 text-center rounded-sm border-b-4 border-brand-gold shadow-lg transform hover:-translate-y-2 transition-transform">
-                <div className="text-4xl md:text-5xl font-black text-white mb-2">{stat.value}</div>
-                <div className="text-brand-gold text-sm uppercase tracking-widest font-bold">{stat.label}</div>
+              <div key={idx} className="text-center group">
+                <div className="text-4xl md:text-5xl font-black text-white mb-2 group-hover:text-[#D4AF37] transition-colors">{stat.value}</div>
+                <div className="text-gray-500 text-xs uppercase tracking-widest font-bold">{stat.label}</div>
               </div>
             ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Our Services */}
-      <section className="py-24 bg-brand-navy border-t border-white/5">
-        <div className="max-w-7xl mx-auto px-4">
-          <h2 className="text-3xl md:text-4xl font-black text-white text-center uppercase tracking-tight mb-16">{t('about.srv_title1')} <span className="text-brand-gold">{t('about.srv_title2')}</span></h2>
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {services.map((service, idx) => {
-              const Icon = service.icon;
-              return (
-                <div key={idx} className="bg-brand-gunmetal p-8 rounded-sm border border-brand-gold/10 hover:border-brand-gold/40 transition-colors group flex items-center space-x-6">
-                  <div className="bg-brand-navy p-4 rounded-sm text-brand-gold group-hover:scale-110 transition-transform">
-                    <Icon size={32} />
-                  </div>
-                  <h3 className="text-xl font-black text-white uppercase tracking-wide">{service.title}</h3>
-                </div>
-              );
-            })}
           </div>
         </div>
       </section>
 
       {/* Why People Trust Us */}
-      <section className="py-24 bg-brand-gunmetal overflow-hidden">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
-            <div>
-              <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-12">{t('about.trust_title1')} <span className="text-brand-gold">{t('about.trust_title2')}</span></h2>
-              <div className="grid sm:grid-cols-2 gap-8">
-                {trustBlocks.map((block, idx) => {
-                  const Icon = block.icon;
-                  return (
-                    <div key={idx} className="space-y-4">
-                      <div className="text-brand-gold"><Icon size={32} /></div>
-                      <h4 className="text-white font-bold uppercase tracking-wider text-lg">{block.title}</h4>
-                      <p className="text-brand-gray text-sm">{block.desc}</p>
-                    </div>
-                  );
-                })}
+      <section className="py-24 max-w-7xl mx-auto px-4">
+        <div className="text-center mb-16">
+          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-4">The <span className="text-[#D4AF37]">Engineering</span> Standard</h2>
+          <p className="text-gray-400">Why top builders and homeowners choose Rajeev Engineering Workshop.</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-8">
+          {trustFactors.map((block, idx) => {
+            const Icon = block.icon;
+            return (
+              <div key={idx} className="bg-[#111827] p-8 border border-white/5 rounded-sm hover:border-[#D4AF37]/30 transition-colors">
+                <div className="text-[#D4AF37] mb-6"><Icon size={40} /></div>
+                <h4 className="text-white font-black uppercase tracking-wider text-lg mb-3">{block.title}</h4>
+                <p className="text-gray-400 text-sm leading-relaxed">{block.desc}</p>
               </div>
-            </div>
-            <div className="relative">
-              <div className="absolute inset-0 border-2 border-brand-gold/20 translate-x-4 translate-y-4 rounded-sm"></div>
-              <img src={heroImage} alt="Our Team" className="relative z-10 w-full h-[500px] object-cover rounded-sm grayscale hover:grayscale-0 transition-all duration-700" />
-            </div>
-          </div>
+            );
+          })}
         </div>
       </section>
 
       {/* Service Areas */}
-      <section className="py-24 bg-brand-navy border-t border-brand-gunmetal">
+      <section className="py-20 border-t border-white/5 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#111827] to-[#081225]">
         <div className="max-w-7xl mx-auto px-4 text-center">
-          <h2 className="text-3xl md:text-4xl font-black text-white uppercase tracking-tight mb-16">{t('about.areas_title1')} <span className="text-brand-gold">{t('about.areas_title2')}</span></h2>
-          <div className="flex flex-wrap justify-center gap-4 max-w-3xl mx-auto">
+          <h2 className="text-2xl md:text-3xl font-black text-white uppercase tracking-tight mb-12">Primary Service <span className="text-[#D4AF37]">Areas</span></h2>
+          <div className="flex flex-wrap justify-center gap-4 max-w-4xl mx-auto">
             {areas.map((area, idx) => (
-              <span key={idx} className="bg-brand-gunmetal text-white border border-brand-gold/20 px-6 py-3 rounded-sm font-bold uppercase tracking-wider text-sm hover:border-brand-gold transition-colors cursor-default">
+              <span key={idx} className="bg-[#081225] text-gray-300 border border-white/10 px-6 py-3 rounded-sm font-bold uppercase tracking-wider text-xs hover:border-[#D4AF37] hover:text-white transition-colors cursor-default shadow-lg">
                 {area}
               </span>
             ))}
+            <span className="bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/20 px-6 py-3 rounded-sm font-black uppercase tracking-wider text-xs shadow-lg">
+              + All across Bihar
+            </span>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="py-24 bg-brand-gunmetal text-center border-t border-brand-gold/20 relative overflow-hidden">
-        <div className="absolute inset-0 opacity-5" style={{ backgroundImage: 'radial-gradient(#D4AF37 1px, transparent 1px)', backgroundSize: '20px 20px' }}></div>
-        <div className="relative z-10 max-w-4xl mx-auto px-4">
-          <h2 className="text-4xl md:text-5xl font-black text-white uppercase tracking-tight mb-6">{t('about.cta_title1')} <span className="text-brand-gold">{t('about.cta_title2')}</span></h2>
-          <p className="text-brand-gray text-xl mb-12 uppercase tracking-widest font-bold">{t('about.cta_desc')}</p>
-          <div className="flex flex-col sm:flex-row justify-center items-center gap-6">
-            <a href="tel:+918877850203" className="bg-brand-gold text-brand-navy px-10 py-4 rounded-sm font-black uppercase tracking-widest hover:bg-yellow-500 transition-colors border-b-4 border-yellow-700 active:border-b-0 active:translate-y-1 w-full sm:w-auto">{t('about.cta_call')}</a>
-            <a href="https://wa.me/918877850203" target="_blank" rel="noopener noreferrer" className="bg-brand-green text-white px-10 py-4 rounded-sm font-black uppercase tracking-widest hover:bg-green-600 transition-colors border-b-4 border-green-800 active:border-b-0 active:translate-y-1 w-full sm:w-auto">{t('about.cta_whatsapp')}</a>
-          </div>
-        </div>
-      </section>
     </div>
   );
 };
