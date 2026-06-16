@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { catalogData } from '../data/catalog';
+import fallbackImage from '../assets/fallback.jpg';
 import { 
   ChevronRight, 
   ArrowLeft,
@@ -16,7 +17,7 @@ import {
 import { motion } from 'framer-motion';
 import SEO from '../components/SEO';
 
-// Image component with built-in pulse skeleton loader
+// Image component with built-in pulse skeleton loader + fallback
 const ImageWithSkeleton = ({ src, alt, className }) => {
   const [loaded, setLoaded] = useState(false);
   
@@ -31,7 +32,9 @@ const ImageWithSkeleton = ({ src, alt, className }) => {
         src={src} 
         alt={alt} 
         loading="lazy"
+        decoding="async"
         onLoad={() => setLoaded(true)}
+        onError={(e) => { e.target.src = fallbackImage; setLoaded(true); }}
         className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${className}`} 
       />
     </div>
@@ -63,16 +66,20 @@ const ProductDetails = () => {
     .filter(item => item.category === product.category && item.slug !== product.slug)
     .slice(0, 4);
 
-  const waMessage = encodeURIComponent(`Hello Rajeev ENGINEERING Workshop, I am interested in ${product.code} - ${product.nameKey}. Please provide more details.`);
+  const waMessage = encodeURIComponent(`Hello Rajeev ENGINEERING Workshop, I am interested in ${product.code} - ${product.name}. Please provide more details.`);
   const waLink = `https://wa.me/918877850203?text=${waMessage}`;
 
-  // SCHEMA MARKUP (Phase 4 & 9)
+  // Dynamic SEO fields
+  const seoTitle = `${product.name} | ${product.material} | Rajeev Engineering Workshop`;
+  const seoDescription = `Premium ${product.name} fabricated using ${product.material}. Custom ${product.category.toLowerCase()} by Rajeev Engineering Workshop Darbhanga. ${product.finish} finish. Best quality iron fabrication in Bihar.`;
+
+  // SCHEMA MARKUP
   const productSchema = {
     "@context": "https://schema.org/",
     "@type": "Product",
-    "name": product.nameKey,
+    "name": product.name,
     "image": product.image,
-    "description": product.seoDescription,
+    "description": seoDescription,
     "brand": {
       "@type": "Brand",
       "name": "Rajeev Engineering Workshop"
@@ -111,7 +118,7 @@ const ProductDetails = () => {
       {
         "@type": "ListItem",
         "position": 3,
-        "name": product.nameKey,
+        "name": product.name,
         "item": `https://rajeev-engineering-workshop.vercel.app/designs/${product.slug}`
       }
     ]
@@ -121,8 +128,8 @@ const ProductDetails = () => {
     <div className="bg-[#081225] min-h-screen pt-24 pb-24 font-sans text-white">
       
       <SEO 
-        title={product.seoTitle || `${product.nameKey} | Rajeev Engineering Workshop`}
-        description={product.seoDescription}
+        title={seoTitle}
+        description={seoDescription}
         image={product.image}
         canonical={`/designs/${product.slug}`}
         type="product"
@@ -136,7 +143,7 @@ const ProductDetails = () => {
           <ChevronRight size={14} className="text-gray-600" />
           <Link to="/designs" className="hover:text-[#D4AF37] transition-colors">All Designs</Link>
           <ChevronRight size={14} className="text-gray-600" />
-          <span className="text-[#D4AF37] truncate max-w-[200px] sm:max-w-none">{product.nameKey}</span>
+          <span className="text-[#D4AF37] truncate max-w-[200px] sm:max-w-none">{product.name}</span>
         </nav>
       </div>
 
@@ -160,7 +167,7 @@ const ProductDetails = () => {
             className="w-full relative"
           >
             <div className="relative aspect-[4/3] rounded-sm overflow-hidden border border-white/10 shadow-2xl">
-              <ImageWithSkeleton src={product.image} alt={product.nameKey} className="w-full h-full" />
+              <ImageWithSkeleton src={product.image} alt={`${product.name} Rajeev Engineering Workshop`} className="w-full h-full" />
               <div className="absolute inset-0 bg-gradient-to-t from-[#081225]/80 via-transparent to-transparent"></div>
               
               {/* Product Code overlay */}
@@ -183,7 +190,7 @@ const ProductDetails = () => {
               </div>
             )}
             
-            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight leading-tight mb-6">{product.nameKey}</h1>
+            <h1 className="text-3xl md:text-5xl font-black text-white uppercase tracking-tight leading-tight mb-6">{product.name}</h1>
             
             <div className="grid grid-cols-2 gap-6 mb-10 p-6 bg-[#111827] border border-white/5 rounded-sm shadow-inner">
               <div>
@@ -192,7 +199,7 @@ const ProductDetails = () => {
               </div>
               <div>
                 <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Type</p>
-                <p className="text-white text-base font-black tracking-wide uppercase">{product.subcategory}</p>
+                <p className="text-white text-base font-black tracking-wide uppercase">{product.type}</p>
               </div>
               <div>
                 <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Material</p>
@@ -201,6 +208,14 @@ const ProductDetails = () => {
               <div>
                 <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Size Reference</p>
                 <p className="text-white text-base font-black tracking-wide uppercase">{product.size}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Finish</p>
+                <p className="text-white text-base font-black tracking-wide uppercase">{product.finish}</p>
+              </div>
+              <div>
+                <p className="text-gray-500 text-xs font-bold uppercase tracking-widest mb-1">Subcategory</p>
+                <p className="text-white text-base font-black tracking-wide uppercase">{product.subcategory}</p>
               </div>
             </div>
 
@@ -223,10 +238,10 @@ const ProductDetails = () => {
           <div className="lg:col-span-2">
             <h2 className="text-2xl font-black text-white uppercase tracking-widest mb-6 border-l-4 border-[#D4AF37] pl-4">Product Details</h2>
             <p className="text-gray-300 text-lg leading-relaxed mb-6 font-medium">
-              This premium <span className="text-[#D4AF37]">{product.nameKey.toLowerCase()}</span> is designed for residential and commercial spaces requiring top-tier security and aesthetic appeal. Fabricated using high-grade <span className="font-bold text-white">{product.material.toLowerCase()}</span>, this structure guarantees long-lasting durability, weather resistance, and an impeccable finish.
+              This premium <span className="text-[#D4AF37]">{product.name.toLowerCase()}</span> is designed for residential and commercial spaces requiring top-tier security and aesthetic appeal. Fabricated using high-grade <span className="font-bold text-white">{product.material.toLowerCase()}</span>, this structure guarantees long-lasting durability, weather resistance, and an impeccable finish.
             </p>
             <p className="text-gray-400 text-base leading-relaxed">
-              At Rajeev Engineering Workshop, every piece is welded by master craftsmen to ensure maximum structural integrity. As part of our <span className="text-white">{product.category}</span> collection, this design combines heavy-duty industrial strength with a refined, polished exterior.
+              At Rajeev Engineering Workshop, every piece is welded by master craftsmen to ensure maximum structural integrity. As part of our <span className="text-white">{product.category}</span> collection, this design combines heavy-duty industrial strength with a refined, polished exterior. Finished with a premium <span className="text-[#D4AF37]">{product.finish.toLowerCase()}</span> for maximum protection and visual appeal.
             </p>
           </div>
           
@@ -268,10 +283,10 @@ const ProductDetails = () => {
                     <div className="absolute top-3 left-3 z-20 bg-[#081225]/90 px-2 py-1 text-[10px] font-black text-[#D4AF37] uppercase tracking-widest border border-white/10 rounded-sm">
                       {related.code}
                     </div>
-                    <ImageWithSkeleton src={related.image} alt={related.nameKey} className="w-full h-full transform group-hover:scale-110 transition-transform duration-700 ease-out" />
+                    <ImageWithSkeleton src={related.image} alt={`${related.name} Rajeev Engineering Workshop`} className="w-full h-full transform group-hover:scale-110 transition-transform duration-700 ease-out" />
                   </div>
                   <div className="p-5 flex-grow flex flex-col">
-                    <h3 className="text-sm font-black text-white uppercase tracking-wide leading-tight mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-2">{related.nameKey}</h3>
+                    <h3 className="text-sm font-black text-white uppercase tracking-wide leading-tight mb-2 group-hover:text-[#D4AF37] transition-colors line-clamp-2">{related.name}</h3>
                     <p className="text-gray-500 text-xs font-bold uppercase tracking-wider mt-auto">{related.subcategory}</p>
                   </div>
                 </Link>

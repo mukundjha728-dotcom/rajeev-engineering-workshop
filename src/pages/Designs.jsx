@@ -17,12 +17,18 @@ import {
   Armchair,
   Fence,
   PenTool,
+  ChevronLeft,
+  ChevronRight,
   Image as ImageIcon
 } from 'lucide-react';
 import { catalogData } from '../data/catalog';
+import fallbackImage from '../assets/fallback.jpg';
 import heroBg from '../assets/images/hero-welding.jpg';
 
-// Category icon mapper
+// ---- Constants ----
+const ITEMS_PER_PAGE = 24;
+
+// ---- Category icon mapper ----
 const getCategoryIcon = (category) => {
   switch(category) {
     case 'Home Security': return Shield;
@@ -38,7 +44,7 @@ const getCategoryIcon = (category) => {
   }
 };
 
-// Image component with built-in pulse skeleton loader
+// ---- Image component with skeleton loader, fallback, and optimization ----
 const ImageWithSkeleton = ({ src, alt, className }) => {
   const [loaded, setLoaded] = useState(false);
   
@@ -55,7 +61,9 @@ const ImageWithSkeleton = ({ src, alt, className }) => {
         src={src} 
         alt={alt} 
         loading="lazy"
+        decoding="async"
         onLoad={() => setLoaded(true)}
+        onError={(e) => { e.target.src = fallbackImage; setLoaded(true); }}
         className={`w-full h-full object-cover transition-opacity duration-500 ${loaded ? 'opacity-100' : 'opacity-0'} ${className}`} 
       />
     </div>
@@ -64,13 +72,17 @@ const ImageWithSkeleton = ({ src, alt, className }) => {
 
 const Designs = () => {
   const navigate = useNavigate();
-  // Active Filter States
+
+  // ---- Filter States ----
   const [searchTerm, setSearchTerm] = useState('');
   const [debouncedSearch, setDebouncedSearch] = useState('');
   const [activeCategories, setActiveCategories] = useState([]);
   const [activeSubcategories, setActiveSubcategories] = useState([]);
 
-  // Debounce search input
+  // ---- Pagination State ----
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // ---- Debounce search input ----
   useEffect(() => {
     const timer = setTimeout(() => {
       setDebouncedSearch(searchTerm);
@@ -78,6 +90,12 @@ const Designs = () => {
     return () => clearTimeout(timer);
   }, [searchTerm]);
 
+  // ---- Reset to page 1 when any filter changes ----
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [activeCategories, activeSubcategories, debouncedSearch]);
+
+  // ---- Memoized category/subcategory lists ----
   const allCategories = useMemo(() => [...new Set(catalogData.map(item => item.category))], []);
   const allSubcategories = useMemo(() => [...new Set(catalogData.map(item => item.subcategory))], []);
 
@@ -89,6 +107,7 @@ const Designs = () => {
     return allSubcategories.filter(sub => !activeSubcategories.includes(sub));
   }, [allSubcategories, activeSubcategories]);
 
+  // ---- Filter handlers ----
   const handleAddCategory = (e) => {
     if(e.target.value) {
       setActiveCategories([...activeCategories, e.target.value]);
@@ -111,7 +130,7 @@ const Designs = () => {
     setActiveSubcategories(activeSubcategories.filter(s => s !== subToRemove));
   };
 
-  // Master Filter Logic
+  // ---- Master Filter Logic (searches name, code, category, subcategory, material, type) ----
   const filteredDesigns = useMemo(() => {
     return catalogData.filter((design) => {
       const matchCategory = activeCategories.length === 0 || activeCategories.includes(design.category);
@@ -120,13 +139,48 @@ const Designs = () => {
       const searchLower = debouncedSearch.toLowerCase();
       const matchSearch = debouncedSearch === '' || 
         design.code.toLowerCase().includes(searchLower) ||
-        design.nameKey.toLowerCase().includes(searchLower) ||
+        design.name.toLowerCase().includes(searchLower) ||
         design.category.toLowerCase().includes(searchLower) ||
-        design.subcategory.toLowerCase().includes(searchLower);
+        design.subcategory.toLowerCase().includes(searchLower) ||
+        design.material.toLowerCase().includes(searchLower) ||
+        design.type.toLowerCase().includes(searchLower);
 
       return matchCategory && matchSubcategory && matchSearch;
     });
   }, [activeCategories, activeSubcategories, debouncedSearch]);
+
+  // ---- Pagination Logic ----
+  const totalPages = Math.ceil(filteredDesigns.length / ITEMS_PER_PAGE);
+
+  const paginatedDesigns = useMemo(() => {
+    const start = (currentPage - 1) * ITEMS_PER_PAGE;
+    return filteredDesigns.slice(start, start + ITEMS_PER_PAGE);
+  }, [filteredDesigns, currentPage]);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    const filterBar = document.getElementById('filter-bar');
+    if (filterBar) {
+      window.scrollTo({ top: filterBar.offsetTop - 60, behavior: 'smooth' });
+    }
+  };
+
+  // ---- Page number generation with ellipsis ----
+  const pageNumbers = useMemo(() => {
+    const pages = [];
+    if (totalPages <= 7) {
+      for (let i = 1; i <= totalPages; i++) pages.push(i);
+    } else {
+      pages.push(1);
+      if (currentPage > 3) pages.push('...');
+      const start = Math.max(2, currentPage - 1);
+      const end = Math.min(totalPages - 1, currentPage + 1);
+      for (let i = start; i <= end; i++) pages.push(i);
+      if (currentPage < totalPages - 2) pages.push('...');
+      pages.push(totalPages);
+    }
+    return pages;
+  }, [currentPage, totalPages]);
 
   const getCategoryCount = (categoryName) => {
     return catalogData.filter(item => item.category === categoryName).length;
@@ -149,7 +203,7 @@ const Designs = () => {
             className="inline-flex items-center justify-center space-x-3 bg-[#111827] px-6 py-3 rounded-full mb-8 border border-[#D4AF37]/50 shadow-[0_0_20px_rgba(212,175,55,0.2)]"
           >
             <span className="w-3 h-3 rounded-full bg-[#D4AF37] animate-pulse"></span>
-            <span className="text-sm md:text-base font-black text-[#D4AF37] uppercase tracking-widest">1000+ Designs Available</span>
+            <span className="text-sm md:text-base font-black text-[#D4AF37] uppercase tracking-widest">{catalogData.length} Designs Available</span>
           </motion.div>
           
           <motion.h1 
@@ -205,9 +259,6 @@ const Designs = () => {
                 }}
                 className="bg-gradient-to-br from-[#111827] to-[#1a2333] border border-white/5 border-b-[3px] border-b-[#111827] hover:border-b-[#D4AF37] p-8 rounded-sm hover:border-[#D4AF37]/30 transition-all duration-300 group cursor-pointer relative overflow-hidden shadow-2xl hover:-translate-y-1 hover:shadow-[0_20px_40px_-15px_rgba(212,175,55,0.2)]"
               >
-                {/* Subtle metallic texture pattern */}
-                <div className="absolute inset-0 opacity-[0.03] bg-[url('https://www.transparenttextures.com/patterns/brushed-alum.png')] z-0"></div>
-                
                 <div className="absolute top-0 right-0 p-6 opacity-10 group-hover:opacity-20 transition-all transform translate-x-4 -translate-y-4 group-hover:scale-125 group-hover:rotate-12 duration-700 z-0">
                   <Icon size={140} className="text-[#D4AF37]" />
                 </div>
@@ -241,12 +292,12 @@ const Designs = () => {
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="Search catalog..."
+                placeholder="Search by name, code, material, type..."
                 className="block w-full pl-12 pr-4 py-4 md:py-4 bg-[#111827] border border-white/10 rounded-sm text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-[#D4AF37] focus:border-transparent transition-all shadow-inner font-bold text-sm md:text-base"
               />
             </div>
 
-            {/* Category Dropdown (Only shows unselected) */}
+            {/* Category Dropdown */}
             <div className="relative w-full md:w-64 shrink-0">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Filter className="h-4 w-4 text-gray-400" />
@@ -266,7 +317,7 @@ const Designs = () => {
               </div>
             </div>
 
-            {/* Subcategory Dropdown (Only shows unselected) */}
+            {/* Subcategory Dropdown */}
             <div className="relative w-full md:w-64 shrink-0">
               <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                 <Filter className="h-4 w-4 text-gray-400" />
@@ -343,13 +394,18 @@ const Designs = () => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-24 min-h-[600px]">
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-2 border-b border-white/5 pb-4">
           <h2 className="text-2xl font-black text-white uppercase tracking-wider border-l-4 border-[#D4AF37] pl-4">Industrial Catalog</h2>
-          <span className="text-gray-400 font-bold text-sm uppercase tracking-widest bg-[#111827] px-3 py-1 rounded-sm border border-white/5">{filteredDesigns.length} Products Found</span>
+          <div className="flex items-center gap-4">
+            <span className="text-gray-400 font-bold text-sm uppercase tracking-widest bg-[#111827] px-3 py-1 rounded-sm border border-white/5">{filteredDesigns.length} Products Found</span>
+            {totalPages > 1 && (
+              <span className="text-gray-500 font-bold text-xs uppercase tracking-widest">Page {currentPage} of {totalPages}</span>
+            )}
+          </div>
         </div>
 
         <motion.div layout className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-10">
           <AnimatePresence mode='popLayout'>
-            {filteredDesigns.map((design) => {
-              const waLink = `https://wa.me/918877850203?text=${encodeURIComponent(`Hello Rajeev ENGINEERING Workshop, I am interested in ${design.code} - ${design.nameKey}. Please provide more details.`)}`;
+            {paginatedDesigns.map((design) => {
+              const waLink = `https://wa.me/918877850203?text=${encodeURIComponent(`Hello Rajeev ENGINEERING Workshop, I am interested in ${design.code} - ${design.name}. Please provide more details.`)}`;
 
               return (
                 <motion.div
@@ -380,16 +436,16 @@ const Designs = () => {
                     
                     <ImageWithSkeleton 
                       src={design.image} 
-                      alt={design.nameKey} 
+                      alt={`${design.name} Rajeev Engineering Workshop`} 
                       className="w-full h-full transform group-hover:scale-110 transition-transform duration-1000 ease-out"
                     />
                     
                     <div className="absolute inset-0 bg-gradient-to-t from-[#111827] via-transparent to-transparent opacity-100"></div>
                   </div>
                   
-                  {/* Content Container (flex-grow keeps cards equal height) */}
+                  {/* Content Container */}
                   <div className="p-6 md:p-8 flex flex-col flex-grow relative">
-                    <h3 className="text-xl md:text-2xl font-black text-white mb-6 uppercase leading-tight line-clamp-2 drop-shadow-md group-hover:text-[#D4AF37] transition-colors">{design.nameKey}</h3>
+                    <h3 className="text-xl md:text-2xl font-black text-white mb-6 uppercase leading-tight line-clamp-2 drop-shadow-md group-hover:text-[#D4AF37] transition-colors">{design.name}</h3>
                     
                     {/* Clean Metadata Block */}
                     <div className="space-y-4 mb-8 flex-grow">
@@ -422,7 +478,60 @@ const Designs = () => {
             })}
           </AnimatePresence>
         </motion.div>
+
+        {/* PAGINATION */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-1.5 sm:gap-2 mt-16 mb-8 flex-wrap">
+            {/* Previous Button */}
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className={`flex items-center space-x-1.5 px-4 py-3 rounded-sm font-black text-xs uppercase tracking-widest transition-all duration-300 border ${
+                currentPage === 1
+                  ? 'bg-[#111827]/50 text-gray-600 border-white/5 cursor-not-allowed'
+                  : 'bg-[#111827] text-white border-white/10 hover:border-[#D4AF37] hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]'
+              }`}
+            >
+              <ChevronLeft size={14} />
+              <span className="hidden sm:inline">Previous</span>
+            </button>
+
+            {/* Page Numbers */}
+            {pageNumbers.map((page, idx) => (
+              page === '...' ? (
+                <span key={`ellipsis-${idx}`} className="px-2 py-3 text-gray-500 font-black text-sm select-none">…</span>
+              ) : (
+                <button
+                  key={page}
+                  onClick={() => handlePageChange(page)}
+                  className={`min-w-[44px] px-3 py-3 rounded-sm font-black text-xs uppercase tracking-widest transition-all duration-300 border ${
+                    currentPage === page
+                      ? 'bg-[#D4AF37] text-[#081225] border-[#D4AF37] shadow-[0_0_20px_rgba(212,175,55,0.3)]'
+                      : 'bg-[#111827] text-gray-300 border-white/10 hover:border-[#D4AF37]/50 hover:text-[#D4AF37]'
+                  }`}
+                >
+                  {page}
+                </button>
+              )
+            ))}
+
+            {/* Next Button */}
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className={`flex items-center space-x-1.5 px-4 py-3 rounded-sm font-black text-xs uppercase tracking-widest transition-all duration-300 border ${
+                currentPage === totalPages
+                  ? 'bg-[#111827]/50 text-gray-600 border-white/5 cursor-not-allowed'
+                  : 'bg-[#111827] text-white border-white/10 hover:border-[#D4AF37] hover:text-[#D4AF37] hover:shadow-[0_0_15px_rgba(212,175,55,0.2)]'
+              }`}
+            >
+              <span className="hidden sm:inline">Next</span>
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        )}
         
+        {/* Empty State */}
         {filteredDesigns.length === 0 && (
           <motion.div 
             initial={{ opacity: 0 }}

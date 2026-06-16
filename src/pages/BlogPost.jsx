@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { blogsData } from '../data/blogs';
 import { catalogData } from '../data/catalog';
+import fallbackImage from '../assets/fallback.jpg';
 import SEO from '../components/SEO';
 import { Calendar, User, ChevronRight, ArrowLeft, ArrowRight } from 'lucide-react';
 
@@ -187,9 +188,9 @@ const BlogPost = () => {
                 {relatedProducts.map(product => (
                   <Link key={product.id} to={`/designs/${product.slug}`} className="group block">
                     <div className="aspect-[4/3] rounded-sm overflow-hidden mb-3 border border-white/10">
-                      <img src={product.image} alt={product.nameKey} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                      <img src={product.image} alt={`${product.name} Rajeev Engineering Workshop`} loading="lazy" decoding="async" onError={(e) => { e.target.src = fallbackImage; }} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <h4 className="text-white text-sm font-bold uppercase tracking-wide group-hover:text-[#D4AF37] transition-colors">{product.nameKey}</h4>
+                    <h4 className="text-white text-sm font-bold uppercase tracking-wide group-hover:text-[#D4AF37] transition-colors">{product.name}</h4>
                   </Link>
                 ))}
               </div>

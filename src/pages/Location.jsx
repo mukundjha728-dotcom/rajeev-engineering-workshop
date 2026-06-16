@@ -3,6 +3,7 @@ import { useParams, Link } from 'react-router-dom';
 import SEO from '../components/SEO';
 import { MapPin, Phone, ShieldCheck, Wrench, Award, CheckCircle2, ArrowRight } from 'lucide-react';
 import { catalogData } from '../data/catalog';
+import fallbackImage from '../assets/fallback.jpg';
 
 const formatCityName = (city) => {
   return city.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
@@ -146,9 +147,9 @@ const Location = () => {
           <div className="md:w-1/2 grid grid-cols-2 gap-4">
             {topProducts.map((product) => (
               <div key={product.id} className="aspect-square relative rounded-sm overflow-hidden border border-white/10">
-                <img src={product.image} alt={product.nameKey} className="w-full h-full object-cover" />
+                <img src={product.image} alt={`${product.name} Rajeev Engineering Workshop`} loading="lazy" decoding="async" onError={(e) => { e.target.src = fallbackImage; }} className="w-full h-full object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#081225] to-transparent opacity-80"></div>
-                <div className="absolute bottom-3 left-3 text-white text-xs font-black uppercase">{product.nameKey}</div>
+                <div className="absolute bottom-3 left-3 text-white text-xs font-black uppercase">{product.name}</div>
               </div>
             ))}
           </div>
